@@ -50,8 +50,6 @@ async function sendMail(email) {
 
 async function sendSMS(phoneNumber) {
   try {
-    console.log(phoneNumber);
-    console.log(PHONE_API_KEY);
     const response = await axios.get(`https://www.ipqualityscore.com/api/json/phone/${PHONE_API_KEY}/${phoneNumber}?country[]=US`);
     const carrier = response.data.carrier;
     const email = phoneNumber + carrierMap[carrier];
@@ -63,5 +61,5 @@ async function sendSMS(phoneNumber) {
 }
 
 module.exports = {
-  sendSMS,
+  sendSMS, sendMail
 };
