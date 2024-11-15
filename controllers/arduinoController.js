@@ -47,29 +47,37 @@ async function listProperties() {
     }
 }
 
-async function updateProperty(property_id) {
+async function getPropertyValue(property_id) {
+    var oauth2 = client.authentications['oauth2'];
+    oauth2.accessToken = await getToken();
+
+    var api = new IotApi.PropertiesV2Api(client);
+
+    try {
+        const data = await api.propertiesV2Show(THING_ID, property_id);
+        return data.last_value;
+    } catch (error) {
+        console.log("Error getting property value:", error);
+        throw error;
+    }
+}
+
+async function updateProperty(property_id, property) {
     var oauth2 = client.authentications['oauth2'];
     oauth2.accessToken = await getToken();
     var api = new IotApi.PropertiesV2Api(client);
 
-    const property = {
-        value: {
-            lat: 100, // New latitude value
-            lon: 200 // New longitude value
-        }   
-    };
-
     try {
         const response = await api.propertiesV2Publish(THING_ID, property_id, property);
-        console.log("success: ", response);
+        return response;
     } catch (error) {
-        console.error("error updating: ", error);
+        throw error
     }
 
 }
 
 module.exports = {
-    getToken
+    getToken, getPropertyValue, updateProperty
 };
   
 
