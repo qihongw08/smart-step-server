@@ -40,7 +40,7 @@ async function listProperties() {
 
     try {
         const data = await api.propertiesV2List(THING_ID, opts);
-        console.log(data);
+        return data;
     } catch (error) {
         console.error("Error fetching properties:", error);
         throw error; // rethrow error for handling by the caller if needed
@@ -67,8 +67,12 @@ async function updateProperty(property_id, property) {
     oauth2.accessToken = await getToken();
     var api = new IotApi.PropertiesV2Api(client);
 
+    property_value = {
+        'value' : property
+    }
+
     try {
-        const response = await api.propertiesV2Publish(THING_ID, property_id, property);
+        const response = await api.propertiesV2Publish(THING_ID, property_id, property_value);
         return response;
     } catch (error) {
         throw error
@@ -76,8 +80,9 @@ async function updateProperty(property_id, property) {
 
 }
 
+
 module.exports = {
-    getToken, getPropertyValue, updateProperty
+    getToken, getPropertyValue, updateProperty, listProperties
 };
   
 

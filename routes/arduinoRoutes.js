@@ -1,5 +1,5 @@
 const express = require('express');
-const { getToken, updateProperty, getPropertyValue } = require('../controllers/arduinoController');
+const { getToken, updateProperty, getPropertyValue, listProperties } = require('../controllers/arduinoController');
 const router = express.Router();
 
 router.get('/token', async (req, res) => {
@@ -18,13 +18,13 @@ router.get('/token', async (req, res) => {
 
 router.put('/property', async (req, res) => {
     try {
-        const { propertyId, newValue } = req.body;  
+        const { propertyId, newValue } = req.body;
 
         try {
             await updateProperty(propertyId, newValue);
             res.status(200).json({ success: true, message: 'Property updated successfully' });
         } catch (error) {
-            res.status(400).json({ success: false, message: 'Failed to update property' });
+            res.status(400).json({ success: false, message: {error} });
         }
     } catch (error) {
         console.error("Error in /property route:", error);
@@ -47,5 +47,19 @@ router.get('/property/:propertyId', async (req, res) => {
         res.status(500).json({ success: false, message: 'Server error' });
     }
 });
+
+router.get('/property-list/', async (req, res) =>{
+    try {
+        const list = await listProperties();
+        if (list) {
+            res.status(200).json({ success: true, list: list });
+        } else {
+            res.status(500).json({ success: false, message: 'Failed to retrieve token' });
+        }
+    } catch (error) {
+        console.error("Error in /token route:", error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+})
 
 module.exports = router;
